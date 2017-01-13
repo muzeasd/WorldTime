@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableRow android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp">
+        <TextView
+            android:text="Country: "
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="@color/maroon"/>
+    </TableRow>
+    <TableRow android:layout_width="match_parent" android:layout_height="wrap_content"  android:layout_marginTop="10dp">
+        <Spinner
+            android:id="@+id/countriesListSpinner"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp"/>
+    </TableRow>
+    <TableRow android:layout_width="match_parent" android:layout_height="wrap_content"  android:layout_marginTop="10dp">
+        <AutoCompleteTextView
+            android:id="@+id/countriesListAutocomplete"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:hint="Type Country"
+            android:layout_height="wrap_content"/>
+    </TableRow>
+    <TableRow android:layout_width="match_parent" android:layout_height="wrap_content"  android:layout_marginTop="10dp">
+        <TextView
+            android:text="City: "
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="@color/maroon"/>
+    </TableRow>
+    <TableRow>
+        <Spinner
+            android:id="@+id/citiesListSpinner"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+    </TableRow>
+    <TableRow android:layout_marginTop="20dp">
+        <TextView
+            android:id="@+id/textviewSelectedCountry"
+            android:hint="Country:"
+            android:layout_weight="1"
+            android:layout_width="0dp"/>
+        <TextView
+            android:id="@+id/textviewSelectedCity"
+            android:hint="City/State:"
+            android:layout_weight="1"
+            android:layout_width="0dp"/>
+    </TableRow>
+    <TableRow android:layout_marginTop="20dp">
+        <Button
+            android:id="@+id/btnAddTimezone"
+            android:layout_weight="1"
+            android:text="Add"
+            android:onClick="OnClick_AddTimezone"/>
+    </TableRow>
+
+</TableLayout>

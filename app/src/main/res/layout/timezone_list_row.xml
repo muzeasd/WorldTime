@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableRow>
+            <TableLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+                    <ImageView
+                        android:id="@+id/flag"
+                        android:src="@mipmap/ic_flag_empty"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:scaleType="fitXY"/>
+            </TableLayout>
+            <TableLayout
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/location"
+                        android:textColor="@color/maroon"
+                        android:textSize="25dp"
+                        android:textStyle="bold"
+                        android:text="Location"
+                        android:layout_marginLeft="10dp"/>
+                    <TextView
+                        android:id="@+id/datetime"
+                        android:layout_below="@id/location"
+                        android:textColor="@color/black"
+                        android:textSize="20dp"
+                        android:layout_marginLeft="10dp"
+                        android:text="Thu Jan 10, '17 21:30"/>
+                    <TextView
+                        android:id="@+id/timezone"
+                        android:textColor="@color/black"
+                        android:layout_width="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="20dp"
+                        android:text="UTC+05:00"/>
+            </TableLayout>
+            <!--<TableLayout-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="wrap_content">-->
+                <!--<TableRow>-->
+                    <!--<ImageView android:src="@mipmap/ic_action_delete_18dp"/>-->
+                <!--</TableRow>-->
+            <!--</TableLayout>-->
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>
