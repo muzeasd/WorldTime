@@ -1,0 +1,4 @@
+<resources>
+    <item name="display_seekbar_time" type="id"/>
+    <item name="timeSeekBar" type="id"/>
+</resources>

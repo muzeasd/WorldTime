@@ -15,6 +15,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 //import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.icu.util.TimeUnit;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -31,12 +34,22 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +84,9 @@ public class MainActivity extends AppCompatActivity
     TimezoneDbHelper mTimezoneDbHelper = null;
 
     static boolean m_IsClosingApp = true;
+    static boolean m_IsHomeTimezoneSet = false;
+
+    CheckBox mChkUseCurrentTime = null;
 
     List<String> list_australia = null;
     List<String> list_brazil = null;
@@ -100,6 +116,238 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mChkUseCurrentTime = ((CheckBox) findViewById(R.id.chkUseCurrentTime));
+        mChkUseCurrentTime.setChecked(true);
+        mChkUseCurrentTime.setEnabled(false);
+
+        mChkUseCurrentTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            private void OnChangeTime(int progress, TextView textView)
+            {
+                try
+                {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    calendar.add(Calendar.MINUTE, progress);
+
+                    String newDateInString = "";
+                    String dateInString = new java.text.SimpleDateFormat("MMM d, kk:mm").format(new Date(calendar.getTimeInMillis()));
+                    StringBuilder builder = new StringBuilder(dateInString);
+                    if(builder.charAt(8) == '2' && dateInString.charAt(9) == '4')
+                    {
+                        builder.replace(8, 10, "00");// = dateInString.replaceFirst("24", "00");
+                        newDateInString = builder.toString();
+                    }
+
+                    textView.setText(newDateInString.trim().length() == 0 ? dateInString : newDateInString);
+
+                    TimeZone timeZone = TimeZone.getDefault();
+                    String homeTimezoneName = timeZone.getDisplayName(); //e.g. Pakistan Standard Time
+                    String homeTimezoneId = timeZone.getDisplayName(false, TimeZone.SHORT); //e.g. UTC+05:00
+                    homeTimezoneId = homeTimezoneId.replace("GMT", "UTC");
+                    SimpleDateFormat formatter = new java.text.SimpleDateFormat("EEE, MMM d, ''yy kk:mm");
+
+//                    for(int index=0; index<mList.size(); index++)
+//                    {
+//                        String itemTimezone = mList.get(index).getTimezone();
+//                        Date date;
+//                        if(homeTimezoneId.trim().equals(itemTimezone.trim()))
+//                        {
+//                            date = new Date(calendar.getTimeInMillis());
+//                        }
+//                        else
+//                        {
+//                            date = calcDateTime(homeTimezoneId, itemTimezone);
+//                        }
+//
+//                        //dateInString = formatter.format(date);
+//                        mList.get(index).setDateTime(date);
+//                    }
+//
+//                    mAdapter.notifyDataSetChanged();
+
+                    newDateInString = "";
+                    for (int index = 0; index < mAdapter.getItemCount(); index++)
+                    {
+
+                        RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForAdapterPosition(index);
+                        TextView tvDateTime = (TextView) holder.itemView.findViewById(R.id.datetime);
+                        TextView tvTimezone = (TextView) holder.itemView.findViewById(R.id.timezone);
+                        String itemTimezone = tvTimezone.getText().toString();
+
+                        if(homeTimezoneId.trim().equals(itemTimezone.trim()))
+                        {
+                            dateInString = formatter.format(new Date(calendar.getTimeInMillis()));
+                            builder = new StringBuilder(dateInString);
+                            if(builder.charAt(17) == '2' && dateInString.charAt(18) == '4')
+                            {
+                                builder.replace(17, 19, "00");// = dateInString.replaceFirst("24", "00");
+                                newDateInString = builder.toString();
+                            }
+
+                            tvDateTime.setText(newDateInString.trim().length() == 0 ? dateInString : newDateInString);
+                        }
+                        else
+                        {
+                            Date date = calcDateTime(homeTimezoneId, itemTimezone);
+                            dateInString = formatter.format(date);
+                            builder = new StringBuilder(dateInString);
+                            if(builder.charAt(17) == '2' && dateInString.charAt(18) == '4')
+                            {
+                                builder.replace(17, 19, "00");// = dateInString.replaceFirst("24", "00");
+                                newDateInString = builder.toString();
+                            }
+
+                            tvDateTime.setText(newDateInString.trim().length() == 0 ? dateInString : newDateInString);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+//                // Finally we add newly created tableLayout to MainActivity TableLayout
+//                TableLayout mainTableLayout =(TableLayout)findViewById(R.id.activity_main);
+//
+//                if(isChecked)
+//                {
+//                    View myView = findViewById(R.id.fragmentCustomTime);
+//                    mainTableLayout.removeViewAt(1);
+//                }
+//                else
+//                {
+//                    TableRow seekbar_row = new TableRow(MainActivity.this);
+//
+//                    RelativeLayout fragmentCustomTime = (RelativeLayout) findViewById(R.id.fragmentCustomTime);
+//                    if(fragmentCustomTime == null)
+//                    {
+//                        View view = getLayoutInflater().inflate(R.layout.fragment_custom_time, null);
+//                        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+//                        seekbar_row.addView(view, params);
+//                        mainTableLayout.addView(seekbar_row, 1);
+//                    }
+//                }
+
+                int step = 1;
+                final int max = 1440;//24*60
+                final int half = max/2; // max/2 = 720
+                int min = 0;//this is 12 hours back from us
+
+                if(isChecked)
+                {
+                    TableLayout mainTableLayout =(TableLayout)findViewById(R.id.activity_main);
+                    mainTableLayout.removeViewAt(1);
+                }
+                else
+                {
+
+                    TableLayout custom_timezone_tablelayout = new TableLayout(getBaseContext());
+
+                    TableRow textView_row = new TableRow(MainActivity.this);
+
+                    String dateInString = new java.text.SimpleDateFormat("MMM d, kk:mm").format(new Date());
+
+                    // In first row, we add textview for showing current time the row
+                    TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+                    TextView view = new TextView(MainActivity.this);
+                    view.setId(R.id.display_seekbar_time);
+                    view.setVisibility(View.VISIBLE);
+                    view.setText(dateInString);
+                    view.setLayoutParams(params);
+                    textView_row.addView(view);
+                    custom_timezone_tablelayout.addView(textView_row);
+
+                    // in second row, we first add MINUS button then SEEKBAR then PLUS button
+                    TableRow seekbar_row = new TableRow(MainActivity.this);
+
+                    Button minus_button = new Button(MainActivity.this);
+                    minus_button.setText("-");
+                    minus_button.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT, 0.5f));
+                    minus_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            SeekBar seekbar = (SeekBar) findViewById(R.id.timeSeekBar);
+                            seekbar.setProgress(seekbar.getProgress() - 1);
+                        }
+                    });
+
+                    seekbar_row.addView(minus_button);
+                    minus_button.getLayoutParams().width = 10;
+
+
+                    TableRow.LayoutParams layoutParams =  new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT, 9.0f);
+                    SeekBar timeSeekBar = new SeekBar(MainActivity.this);
+                    timeSeekBar.setLayoutParams(layoutParams);
+                    timeSeekBar.setId(R.id.timeSeekBar);
+                    timeSeekBar.setMax(max);
+                    timeSeekBar.setProgress(half);
+                    seekbar_row.addView(timeSeekBar/*, layoutParams*/);
+
+                    Button plus_button = new Button(MainActivity.this);
+                    plus_button.setText("+");
+//                    plus_button.setMinimumWidth(30);
+//                    plus_button.setMaxWidth(30);
+//                    plus_button.setMaxHeight(30);
+//                    plus_button.setMinimumHeight(30);
+//                    plus_button.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT, 0.5f));
+                    plus_button.setLayoutParams(new LinearLayout.LayoutParams(30, 20));
+                    plus_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            SeekBar seekbar = (SeekBar) findViewById(R.id.timeSeekBar);
+                            seekbar.setProgress(seekbar.getProgress() + 1);
+                        }
+                    });
+
+                    seekbar_row.addView(plus_button);
+
+                    // now we add second row to the newly created layout
+                    custom_timezone_tablelayout.addView(seekbar_row);
+
+
+                    // Finally we add newly created tableLayout to MainActivity TableLayout
+                    TableLayout mainTableLayout =(TableLayout)findViewById(R.id.activity_main);
+                    mainTableLayout.addView(custom_timezone_tablelayout, 1);
+
+                    // dont forget to add the progress_change_listener to the seekbar
+
+                    timeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+                        {
+                            int minutes_to_add = 0;
+                            TextView textView = (TextView) MainActivity.this.findViewById(R.id.display_seekbar_time);
+
+                            if(progress > half)
+                                minutes_to_add = progress - half;
+                            else minutes_to_add = -1 * (half - progress);
+
+                            String msg = "P: " + progress + ", M: " + minutes_to_add;
+
+//                            textView.setText(msg);
+
+                            OnChangeTime(minutes_to_add, textView);
+                        }
+
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) { }
+
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar)
+                        {
+                            //Toast.makeText(getBaseContext(), "Value = " + seekBar.getProgress(), LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            }
+        });
 
         prepareCitiesWithMultipleTimezones();
 
@@ -151,7 +399,16 @@ public class MainActivity extends AppCompatActivity
                             if(country_id == item.getId())
                             {
                                 RemoveTimezoneFromDB(item.getName() /*country_id*/);
+                                if(mList.get(index).getIsHomeTimezone() == true)
+                                    m_IsHomeTimezoneSet = false;
+
                                 mList.remove(index);
+
+                                if(mList.size() <= 0) break;
+
+                                RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForAdapterPosition(index);
+                                holder.itemView.setBackgroundColor(Color.rgb(238, 238, 238));
+
                                 break;
                             }
                         }
@@ -192,7 +449,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
                 try {
-                    for (int index = 0; index < mRecyclerView.getAdapter().getItemCount(); index++)
+                    for (int index = 0; index < mAdapter.getItemCount(); index++)
                     {
 
                         RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForAdapterPosition(index);
@@ -200,16 +457,24 @@ public class MainActivity extends AppCompatActivity
 
                         String dateInString = tvDateTime.getText().toString(); //new java.text.SimpleDateFormat("EEE, MMM d, ''yy hh:mm").format(new Date());
 
-                        SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, ''yy hh:mm"); //"EEE, MMM d, ''yy"
+                        SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, ''yy kk:mm"); //"EEE, MMM d, ''yy"
                         Date parsedDate = formatter.parse(dateInString);
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(parsedDate);
                         calendar.add(Calendar.MINUTE, 1);
 
-                        dateInString = new java.text.SimpleDateFormat("EEE, MMM d, ''yy hh:mm")
+                        dateInString = new java.text.SimpleDateFormat("EEE, MMM d, ''yy kk:mm")
                                 .format(new Date(calendar.getTimeInMillis()));
 
-                        tvDateTime.setText(dateInString);
+                        String newDateInString = "";
+                        StringBuilder builder = new StringBuilder(dateInString);
+                        if(builder.charAt(17) == '2' && dateInString.charAt(18) == '4')
+                        {
+                            builder.replace(17, 19, "00");// = dateInString.replaceFirst("24", "00");
+                            newDateInString = builder.toString();
+                        }
+
+                        tvDateTime.setText(newDateInString.trim().length() > 0 ? newDateInString : dateInString);
                     }
 
                     //Toast.makeText(context, "Alarm Set", Toast.LENGTH_LONG).show();
@@ -221,6 +486,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
+
         timerHandler.postDelayed(updater, 1000*60);
     }
 
@@ -364,7 +630,7 @@ public class MainActivity extends AppCompatActivity
 
         list_unitedStates.add("UTC-10:00, Honolulu");
         list_unitedStates.add("UTC-09:00, Anchorage");
-        list_unitedStates.add("UTC-08:00, California");
+        list_unitedStates.add("UTC-08:00, Los Angeles");
         list_unitedStates.add("UTC-07:00, Arizona");
         list_unitedStates.add("UTC-06:00, Chicago");
         list_unitedStates.add("UTC-05:00, New York");
@@ -417,6 +683,7 @@ public class MainActivity extends AppCompatActivity
             int id = data.getIntExtra("id", -1);
             String name = data.getStringExtra("name");
             String timezone = data.getStringExtra("timezone");
+            boolean isHomeTimezone = data.getBooleanExtra("isHomeTimezone", false);
 
             if(mList.size() > 0)
             {
@@ -434,21 +701,33 @@ public class MainActivity extends AppCompatActivity
 
             CountryTimezone country = new CountryTimezone(id, name, bitmap);
             country.setTimezone(timezone);
-            country.setIsHomeTimezone(mList.size() == 0 ? 1 : 0);
+            country.setIsHomeTimezone(isHomeTimezone);
             country.setFlag(bitmap);
 
             // If this is first item...then it is Home timezone... secondary otherwise
             Date date = null;
-            if(mList.size() <= 0)
+            if(country.getIsHomeTimezone())
+            {
                 date = new Date();
+                m_IsHomeTimezoneSet = country.getIsHomeTimezone();
+            }
             else
-                date = calcDateTime(mList.get(0).getTimezone(), country.getTimezone());
+            {
+                TimeZone timeZone = TimeZone.getDefault();
 
+                // home timezone_name (e.g Pakistan Standard Time)
+                String homeTimezoneName = timeZone.getDisplayName();
+
+                // home timezone_id (e.g UTC+05:00 or GMT+05:00)
+                String homeTimezoneId = timeZone.getDisplayName(false, TimeZone.SHORT);
+
+                date = calcDateTime(homeTimezoneId, country.getTimezone());
+            }
 
             country.setDateTime(date);
-
             mList.add(country);
 
+            // Persist it to retrieve later during app startup/shutdown
             AddTimezoneToDB(country);
 
             mAdapter.notifyDataSetChanged();
@@ -473,7 +752,7 @@ public class MainActivity extends AppCompatActivity
         ContentValues content_value = new ContentValues();
         content_value.put(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_COUNTRY_ID, country.getId());
         content_value.put(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_CITY_NAME, country.getName());
-//        content_value.put(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_TIME, dateInString);
+        content_value.put(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_ISHOMETIMEZONE, country.getIsHomeTimezone() == true ? 1 : 0);
         content_value.put(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_CITY_TIMEZONE, country.getTimezone());
 
         long countryId = db.insert(TimezonesReaderContract.SavedTimezoneEntry.TABLE_NAME, null, content_value);
@@ -1380,31 +1659,32 @@ public class MainActivity extends AppCompatActivity
 
                         int id_index = cursor.getColumnIndex(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_COUNTRY_ID);
                         int city_name_index = cursor.getColumnIndex(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_CITY_NAME);
-//                        int time_index = cursor.getColumnIndex(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_TIME);
+                        int is_home_timezone_index = cursor.getColumnIndex(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_ISHOMETIMEZONE);
                         int timezone_index = cursor.getColumnIndex(TimezonesReaderContract.SavedTimezoneEntry.COLUMN_NAME_CITY_TIMEZONE);
 
                         int id = cursor.getInt(id_index);
                         String city_name = cursor.getString(city_name_index);
-//                        String time = cursor.getString(time_index);
+                        int is_home_timezone = cursor.getInt(is_home_timezone_index);
                         String timezone = cursor.getString(timezone_index);
 
                         Bitmap bmp = getFlag(id);
 
-
                         CountryTimezone country = new CountryTimezone(id, city_name, bmp);
                         country.setTimezone(timezone);
                         country.setFlag(bmp);
+                        country.setIsHomeTimezone(is_home_timezone == 1 ? true : false);
 
                         // if this is first item....then we take current system time.....
                         // else we calculate other timezone's time relative to first one
                         Date currentDateTime = null;
                         if(index == 1)
                         {
-                            country.setIsHomeTimezone(1);
+//                            country.setIsHomeTimezone(true);
                             currentDateTime = new Date();
+                            MainActivity.m_IsHomeTimezoneSet = true;
                         }
                         else {
-                            country.setIsHomeTimezone(0);
+//                            country.setIsHomeTimezone(false);
                             currentDateTime = calcDateTime(mList.get(0).getTimezone(), timezone);
                         }
 
@@ -1416,10 +1696,10 @@ public class MainActivity extends AppCompatActivity
                     mAdapter.notifyDataSetChanged();
 
                     setupAlarmManager();
-
-                    countQuery = "DELETE FROM " + TimezonesReaderContract.SavedTimezoneEntry.TABLE_NAME;
-                    cursor = db.rawQuery(countQuery, null);
-                    cursor.close();
+//
+//                    countQuery = "DELETE FROM " + TimezonesReaderContract.SavedTimezoneEntry.TABLE_NAME;
+//                    cursor = db.rawQuery(countQuery, null);
+//                    cursor.close();
                 }
             }
             catch (Exception ex)

@@ -20,7 +20,7 @@ public class CountryTimezone implements Parcelable
     private String name = "";
     private String timezone = "";
     private Date dateTime = null;
-    private int isHomeTimezone = 0;
+    private boolean isHomeTimezone = false;
     private Bitmap flag = null;
 
     public CountryTimezone(int id, String name, Bitmap bitmap)
@@ -39,11 +39,11 @@ public class CountryTimezone implements Parcelable
         this.dateTime = dateTime;
     }
 
-    public int getIsHomeTimezone() {
+    public boolean getIsHomeTimezone() {
         return isHomeTimezone;
     }
 
-    public void setIsHomeTimezone(int isHomeTimezone) {
+    public void setIsHomeTimezone(boolean isHomeTimezone) {
         this.isHomeTimezone = isHomeTimezone;
     }
 
@@ -88,7 +88,7 @@ public class CountryTimezone implements Parcelable
             this.name = in.readString();
             this.timezone = in.readString();
             this.dateTime = new Date(in.readLong());
-            this.isHomeTimezone = in.readInt();
+            this.isHomeTimezone = in.readByte() != 0;
             this.flag = in.readParcelable(getClass().getClassLoader()); //CREATOR.createFromParcel(in);
         //}
         //catch (ParseException ex) {
@@ -124,7 +124,7 @@ public class CountryTimezone implements Parcelable
         if(this.dateTime != null)
             dest.writeLong(this.dateTime.getTime());
 
-        dest.writeInt(this.isHomeTimezone);
+        dest.writeByte((byte) (isHomeTimezone ? 1 : 0));
 
         if(this.flag != null)
             this.flag.writeToParcel(dest, flags);

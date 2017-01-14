@@ -15,6 +15,7 @@ import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import interfaces.OnItemClickListener;
@@ -76,14 +77,25 @@ public class TimezoneAdapter extends RecyclerView.Adapter<TimezoneAdapter.MyView
 
         CountryTimezone country = m_List.get(position);
 
-        if(country.getIsHomeTimezone() == 1)
+        if(country.getIsHomeTimezone())
             holder.itemView.setBackgroundColor(Color.GREEN);
 
         holder.location.setText(country.getName());
         holder.timezone.setText(country.getTimezone());
 
-        DateFormat df = new SimpleDateFormat("EEE, MMM d, ''yy kk:mm"); //"MM/dd/yyyy HH:mm"
-        if(country.getDateTime() != null) holder.date_time.setText(df.format(country.getDateTime()));
+        DateFormat formatter = new SimpleDateFormat("EEE, MMM d, ''yy kk:mm"); //"MM/dd/yyyy HH:mm"
+
+
+        String dateInString = formatter.format(country.getDateTime());
+        String newDateInString = "";
+        StringBuilder builder = new StringBuilder(dateInString);
+        if(builder.charAt(17) == '2' && dateInString.charAt(18) == '4')
+        {
+            builder.replace(17, 19, "00");// = dateInString.replaceFirst("24", "00");
+            newDateInString = builder.toString();
+        }
+
+        if(country.getDateTime() != null) holder.date_time.setText(newDateInString.trim().length() > 0 ? newDateInString : dateInString);
         if(country.getFlag() != null) holder.flag.setImageBitmap(country.getFlag());
 
         holder.bind(m_List.get(position), mListener);

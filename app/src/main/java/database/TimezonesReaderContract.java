@@ -23,7 +23,7 @@ public class TimezonesReaderContract
             "CREATE TABLE " + SavedTimezoneEntry.TABLE_NAME + " (" +
                     SavedTimezoneEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER," +
                     SavedTimezoneEntry.COLUMN_NAME_CITY_NAME+ " TEXT ," +
-                    SavedTimezoneEntry.COLUMN_NAME_TIME+ " TEXT," +
+                    SavedTimezoneEntry.COLUMN_NAME_ISHOMETIMEZONE+ " INT," +
                     SavedTimezoneEntry.COLUMN_NAME_CITY_TIMEZONE + " TEXT);";
 
     public static final String SQL_DELETE_COUNTRIES = "DROP TABLE IF EXISTS " + TimezoneEntry.TABLE_NAME;
@@ -53,7 +53,7 @@ public class TimezonesReaderContract
         public static final String TABLE_NAME = "saved_countries";
         public static final String COLUMN_NAME_COUNTRY_ID = "id";
         public static final String COLUMN_NAME_CITY_NAME = "city_name";
-        public static final String COLUMN_NAME_TIME = "time";
+        public static final String COLUMN_NAME_ISHOMETIMEZONE = "time";
         public static final String COLUMN_NAME_CITY_TIMEZONE = "city_timezone";
     }
 }

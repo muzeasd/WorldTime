@@ -1,0 +1,38 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragmentCustomTime"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/activity"
+    tools:context=".gui.custom_time"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TableRow>
+        <TextView
+            android:id="@+id/txtViewDisplaySeekbarTime"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:hint="SeekBar Time"/>
+    </TableRow>
+    <TableRow>
+        <ImageView
+            android:src="@mipmap/ic_action_time_sub"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="50dp" />
+        <SeekBar
+            android:layout_weight="8"
+            android:layout_marginTop="10dp"/>
+        <ImageView
+            android:src="@mipmap/ic_action_time_add"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="50dp"/>
+    </TableRow>
+    </TableLayout>
+</RelativeLayout>

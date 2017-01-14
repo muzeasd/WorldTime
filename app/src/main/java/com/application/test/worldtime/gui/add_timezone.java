@@ -6,6 +6,7 @@ import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,8 +15,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.application.test.worldtime.R;
@@ -111,9 +117,15 @@ public class add_timezone extends AppCompatActivity
     }
 
     @Override
+    protected void onStart()
+    {
+        super.onStart();
+        ((CheckBox) findViewById(R.id.chkHomeTimezone)).setEnabled(!MainActivity.m_IsHomeTimezoneSet);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        MainActivity.m_IsClosingApp = true;
     }
 
     private void getCountryList()
@@ -195,6 +207,12 @@ public class add_timezone extends AppCompatActivity
         mSpinnerCity.setSelection(0);
     }
 
+    public void OnClick_CheckHomeTimezone(View view)
+    {
+        CheckBox chkHomeTimezone = (CheckBox) findViewById(R.id.chkHomeTimezone);
+        mReturnCountryTimezone.setIsHomeTimezone(chkHomeTimezone.isChecked());
+    }
+
     public void OnClick_AddTimezone(View view)
     {
         Intent intent = new Intent();
@@ -202,6 +220,7 @@ public class add_timezone extends AppCompatActivity
         intent.putExtra("id", mReturnCountryTimezone.getId());
         intent.putExtra("name", mReturnCountryTimezone.getName());
         intent.putExtra("timezone", mReturnCountryTimezone.getTimezone());
+        intent.putExtra("isHomeTimezone", mReturnCountryTimezone.getIsHomeTimezone());
 
 
         /*
