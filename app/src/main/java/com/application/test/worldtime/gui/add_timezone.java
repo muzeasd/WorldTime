@@ -1,5 +1,6 @@
 package com.application.test.worldtime.gui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -33,7 +34,7 @@ import database.TimezoneDbHelper;
 import database.TimezonesReaderContract;
 import models.CountryTimezone;
 
-public class add_timezone extends AppCompatActivity
+public class add_timezone extends Activity
 {
 
     TimezoneDbHelper mTimezoneDbHelper = null;

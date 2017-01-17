@@ -49,9 +49,12 @@ public class TimezoneAdapter extends RecyclerView.Adapter<TimezoneAdapter.MyView
         }
 
 
-        public void bind(final CountryTimezone item, final OnItemClickListener listener) {
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
+        public void bind(final CountryTimezone item, final OnItemClickListener listener)
+        {
+            itemView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override public void onClick(View v)
+                {
                     listener.onItemClick(item);
                 }
             });
