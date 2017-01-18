@@ -23,30 +23,6 @@
                 layout="@layout/toolbar" />
         </LinearLayout>
 
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TableRow android:layout_marginTop="0dp">
-                <TextView android:layout_weight="15"/>
-                <CheckBox
-                    android:id="@+id/chkUseCurrentTime"
-                    android:layout_weight="1"
-                    android:text="Use Current Time?"/>
-            </TableRow>
-
-            <!--<TableRow>-->
-                <!--<android.support.v7.widget.RecyclerView-->
-                <!--android:id="@+id/my_recycler_view"-->
-                <!--android:layout_weight="1"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:scrollbars="vertical" />-->
-            <!--</TableRow>-->
-
-        </TableLayout>
-
         <FrameLayout
             android:id="@+id/container_body"
             android:layout_width="fill_parent"

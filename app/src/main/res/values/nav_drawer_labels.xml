@@ -2,7 +2,7 @@
 <resources>
     <string-array name="nav_drawer_labels">
         <item>Home</item>
-        <item>Friends</item>
-        <item>Messages</item>
+        <item>Add New Timezone</item>
+        <item>About</item>
     </string-array>
 </resources>
